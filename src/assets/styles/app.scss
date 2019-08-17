@@ -1,0 +1,13 @@
+@import "bulma/sass/utilities/functions.sass";
+
+$primary: #8c67ef;
+$primary-invert: findColorInvert($primary);
+
+$link: $primary;
+$link-invert: $primary-invert;
+$link-focus-border: $primary;
+
+@import "./spacing.scss";
+
+@import "~bulma";
+@import "~buefy/src/scss/buefy";
