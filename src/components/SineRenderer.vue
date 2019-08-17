@@ -6,6 +6,9 @@
 
 <script>
 import bus from "@/library/EventBus";
+// import Vector2 from "@/library/Vector2";
+
+import { generateSineWave } from "@/library/Sine";
 
 export default {
   name: "SineRenderer",
@@ -21,12 +24,20 @@ export default {
       default: 200
     },
 
+    /*
+      Iterations aka hertz (cycles per second).
+    */
     iterations: {
-      type: [Number, String],
+      type: [Number, String], // Allow strings too basically because of range inputs.
       default: 1.0,
       validator(value) {
         return parseInt(value) >= 1.0;
       }
+    },
+
+    seconds: {
+      type: Number,
+      default: 1.0
     }
   },
 
@@ -74,7 +85,7 @@ export default {
     },
 
     drawGraph(context) {
-      const numSections = 16;
+      const numSections = this.seconds * 10;
       const sectionWidth = this.width / numSections;
 
       for (let x = 0; x < numSections; x ++) {
@@ -82,19 +93,20 @@ export default {
         context.moveTo(x * sectionWidth, this.height - 20);
         context.lineTo(x * sectionWidth, this.height);
         context.stroke();
-        context.lineWidth = x % 4 === 3 ? 3.0 : 1.0;
+        context.lineWidth = x % 2 === 1 ? 3.0 : 1.0;
         context.closePath();
       }
     },
 
     drawSineWave(context) {
+      const generator = generateSineWave(this.iterations);
+
       context.beginPath();
       for (let x = 0; x <= 360; x += 1) {
-        const y =
-          this.halfHeight -
-          (Math.sin((x * this.iterations * Math.PI) / 180) * this.waveHeight) /
-            2;
-        context.lineTo(x * this.scaleFactorX, y);
+        const sine = generator.next().value;
+
+        const y = this.halfHeight - sine.j * (this.waveHeight / 2);
+        context.lineTo(sine.i * this.scaleFactorX, y);
       }
       context.lineWidth = 1.0;
       context.stroke();
