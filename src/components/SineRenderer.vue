@@ -5,9 +5,6 @@
 </template>
 
 <script>
-import bus from "@/library/EventBus";
-// import Vector2 from "@/library/Vector2";
-
 import { generateSineWave } from "@/library/Sine";
 
 export default {
@@ -15,7 +12,7 @@ export default {
 
   props: {
     width: {
-      type: Number,
+      type: [Number, String],
       default: 800
     },
 
@@ -24,26 +21,17 @@ export default {
       default: 200
     },
 
-    /*
-      Iterations aka hertz (cycles per second).
-    */
-    iterations: {
-      type: [Number, String], // Allow strings too basically because of range inputs.
-      default: 1.0,
-      validator(value) {
-        return parseInt(value) >= 1.0;
-      }
-    },
-
-    seconds: {
-      type: Number,
-      default: 1.0
+    sine: {
+      type: Object,
+      required: true
     }
   },
 
   data() {
     return {
-      context: null
+      seconds: 1,
+      context: null,
+      generator: null
     };
   },
 
@@ -55,7 +43,7 @@ export default {
     waveHeight() {
       return Math.max(
         50,
-        Math.min(this.height - 50, this.height - (this.iterations / 2) * 20)
+        Math.min(this.height - 50, this.height - (this.sine.hertz / 2) * 20)
       );
     },
 
@@ -67,11 +55,17 @@ export default {
   mounted() {
     this.context = this.$refs.canvas.getContext("2d");
 
-    bus.$on("render", this.render);
+    this.$emit("added", {
+      id: this.sine.id,
+      renderer: this.render
+    });
   },
 
   beforeDestroy() {
-    bus.$off("render", this.render);
+    this.$emit("removed", {
+      id: this.sine.id,
+      renderer: this.render
+    });
   },
 
   methods: {
@@ -85,35 +79,39 @@ export default {
     },
 
     drawGraph(context) {
-      const numSections = this.seconds * 10;
-      const sectionWidth = this.width / numSections;
-
-      for (let x = 0; x < numSections; x ++) {
-        context.beginPath();
-        context.moveTo(x * sectionWidth, this.height - 20);
-        context.lineTo(x * sectionWidth, this.height);
-        context.stroke();
-        context.lineWidth = x % 2 === 1 ? 3.0 : 1.0;
-        context.closePath();
-      }
+      // const numSections = this.seconds * 10;
+      // const sectionWidth = this.width / numSections;
+      // for (let x = 0; x < numSections; x ++) {
+      //   context.beginPath();
+      //   context.moveTo(x * sectionWidth, this.height - 20);
+      //   context.lineTo(x * sectionWidth, this.height);
+      //   context.stroke();
+      //   context.lineWidth = x % 2 === 1 ? 3.0 : 1.0;
+      //   context.closePath();
+      // }
     },
 
     drawSineWave(context) {
-      const generator = generateSineWave(this.iterations);
+      this.generator = generateSineWave(this.sine.hertz);
 
       context.beginPath();
-      for (let x = 0; x <= 360; x += 1) {
-        const sine = generator.next().value;
+      for (let x = 0; x <= 360 * 2; x ++) {
+        const sine = this.generator.next().value;
 
-        const y = this.halfHeight - sine.j * (this.waveHeight / 2);
+        const y = this.halfHeight - sine.j * this.waveHeight;
         context.lineTo(sine.i * this.scaleFactorX, y);
       }
       context.lineWidth = 1.0;
+      context.lineCap = "round";
       context.stroke();
       context.closePath();
-
-      window.requestAnimationFrame(this.render);
     }
   }
 };
 </script>
+
+<style>
+canvas {
+  margin-bottom: 1rem;
+}
+</style>
