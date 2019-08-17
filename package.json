@@ -1,7 +1,23 @@
 {
-  "name": "fourier-transforms",
-  "version": "0.1.0",
-  "private": true,
+  "name": "fourier-transform",
+  "description": "A little visualisation of the fourier transform inspired by a Youtube video by 3Blue1Brown.",
+  "version": "0.0.1",
+  "author": "sustained <sustained.dissonance@gmail.com> (https://sustained.name/)",
+  "homepage": "https://sustained.name/projects/fourier-transform",
+  "repository": "github:sustained/fourier-transform",
+  "license": "MIT",
+  "keywords": [
+    "maths",
+    "fourier",
+    "transform",
+    "visualisation",
+    "frequency",
+    "time",
+    "domain",
+    "trigonometry",
+    "pi",
+    "tau"
+  ],
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
