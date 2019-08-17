@@ -25,7 +25,7 @@ export default {
       type: [Number, String],
       default: 1.0,
       validator(value) {
-        return value >= 1.0;
+        return parseInt(value) >= 1.0;
       }
     }
   },
