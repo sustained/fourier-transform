@@ -37,7 +37,6 @@
 </template>
 
 <script>
-import bus from "@/library/EventBus";
 import { id } from "@/library/Utility";
 
 import SineRenderer from "@/components/SineRenderer";
