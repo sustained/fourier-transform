@@ -95,7 +95,7 @@ export default {
       this.generator = generateSineWave(this.sine.hertz);
 
       context.beginPath();
-      for (let x = 0; x <= 360 * 2; x ++) {
+      for (let x = 0; x <= 360; x ++) {
         const sine = this.generator.next().value;
 
         const y = this.halfHeight - sine.j * this.waveHeight;
